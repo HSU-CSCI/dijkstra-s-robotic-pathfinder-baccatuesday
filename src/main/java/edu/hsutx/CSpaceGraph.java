@@ -17,11 +17,56 @@ public class CSpaceGraph extends WeightedDirectedGraph {
      * @param cspace
      */
     public CSpaceGraph(int[][] cspace) {
-        // TODO - Implement
+
         super(0, new ArrayList<Edge>());
+
+        // collect all the edges
+        List<Edge> edges = new ArrayList<>();
+
+        // loop through the whole graph and find which spaces are zero
+        for (int x=0; x < cspace.length; x++) {
+            for (int y=0; y < cspace[0].length; y++) {
+                int value = cspace[x][y];
+
+                // if the vertex at coordinate is 0,
+                // then save it to an int
+                if (value == 0) {
+                    int vertexID = x + y * cspace[0].length;
+
+                    // put all 8 directions into an array
+                    // both x and y are needed for the coordinates
+                    int[] xID = {-1, -1, -1, 0, 0, 1, 1, 1};
+                    int[] yID = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+                    // for all 8 coordinates, set the boundary coordinates
+                    for (int i=0; i < 8; i++) {
+                        int xBound = x + xID[i];
+                        int yBound = y + yID[i];
+
+                        // check if the boundary coordinates are within the grid boundary
+                        if (xBound >= 0 && xBound < cspace.length && yBound >= 0 && yBound < cspace[0].length) {
+
+                            // check if the neighbor is an open space
+                            if (cspace[xBound][yBound] == 0) {
+                                // save the neighbor to an int
+                                int neighborID = xBound + yBound * cspace[0].length;
+
+                                // set the weight for straight and diagonals
+                                double weight = Math.sqrt(xID[i] * xID[i] + yID[i] * yID[i]);
+
+                                // add to the list of edges
+                                edges.add(new Edge(vertexID, neighborID, weight));
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 
     }
+
+
 
     /***
      * Wrapper Class for getDykstraPath using points for cspaces
