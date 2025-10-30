@@ -6,8 +6,8 @@ public class WeightedDirectedGraph {
     // TODO - Implement storage of the graph, including either adjacency list, adjacency matrix, or both.
     // Going with adjacency matrix
     // hold the edge weights and vertex count
-    private static double[][] adjMatrix;
-    private static int verCount;
+    protected static double[][] adjMatrix;
+    protected static int verCount;
 
     /***
      * fills the adjacency matrix with vertices and their weights.
