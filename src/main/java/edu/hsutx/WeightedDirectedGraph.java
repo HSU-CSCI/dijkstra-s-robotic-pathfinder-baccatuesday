@@ -1,12 +1,13 @@
 package edu.hsutx;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public class WeightedDirectedGraph {
     // TODO - Implement storage of the graph, including either adjacency list, adjacency matrix, or both.
     // Going with adjacency matrix
     // hold the edge weights and vertex count
-    protected static double[][] adjMatrix;
+    protected static List<List<Edge>> adjList;
     protected static int verCount;
 
     /***
@@ -16,13 +17,17 @@ public class WeightedDirectedGraph {
      * @param edgeList: an List of Edges containing start and end vertex # and weight.
      ***/
     public WeightedDirectedGraph(int vertexQuantity, List<Edge> edgeList) {
-        // create matrix and keep track of vertices
-        adjMatrix = new double[vertexQuantity + 1][vertexQuantity + 1];
         verCount = vertexQuantity;
 
-        // loop through edgeList and put start, end, weight into Matrix
+        // create ArrayList for the size
+        adjList = new ArrayList<>();
+        for (int i = 0; i <= vertexQuantity; i++) {
+            adjList.add(new ArrayList<Edge>());
+        }
+
+        // loop through edgeList and add the edge
         for (Edge edge : edgeList) {
-            adjMatrix[edge.getStart()][edge.getEnd()] = edge.getWeight();
+            adjList.get(edge.getStart()).add(edge);
         }
     }
 
@@ -32,16 +37,13 @@ public class WeightedDirectedGraph {
      * @param end ending vertex
      */
     public static boolean isAdjacent(int start, int end) {
-        // 0 is no edge, since vertex count starts at 1
-        return adjMatrix[start][end] != 0;
-    }
-
-    /***
-     * returns a 2d matrix of adjacency weights, with 0 values for non-adjacent vertices.
-     * @return matrix of doubles representing adjacent edge weights
-     */
-    public static double[][] adjacencyMatrix() {
-        return adjMatrix;
+        // for the list of edges, if end edge is the end
+        for (Edge edge : adjList.get(start)) {
+            if (edge.getEnd() == end) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /***
@@ -114,15 +116,16 @@ public class WeightedDirectedGraph {
             }
 
             // check all vertices for an edge
-            for (int i = 1; i <= verCount; i++) {
+            for (Edge edge : adjList.get(current)) {
                 // check if a vertex is an edge and
                 // if it has not been visited before
-                if (isAdjacent(current, i) && !visited[i]) {
+                int neighbor = edge.getEnd();
+                if (!visited[neighbor]) {
                     // record that i-vertex has been visited
                     // record the path and add vertex to the queue
-                    visited[i] = true;
-                    road[i] = current;
-                    queue[back] = i;
+                    visited[neighbor] = true;
+                    road[neighbor] = current;
+                    queue[back] = neighbor;
                     back ++;
                 }
             }
@@ -200,15 +203,16 @@ public class WeightedDirectedGraph {
             }
 
             // check all vertices for an edge
-            for (int i = 1; i <= verCount; i++) {
+            for (Edge edge : adjList.get(current)) {
                 // check if a vertex is an edge and
                 // if it has not been visited before
-                if (isAdjacent(current, i) && !visited[i]) {
+                int neighbor = edge.getEnd();
+                if (!visited[neighbor]) {
                     // record that i-vertex has been visited
                     // record the path and add vertex to the stack
-                    visited[i] = true;
-                    road[i] = current;
-                    stack[top] = i;
+                    visited[neighbor] = true;
+                    road[neighbor] = current;
+                    stack[top] = neighbor;
                     top++;
                 }
             }
